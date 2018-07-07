@@ -3,6 +3,7 @@
         "iostream": "cpp",
         "utility": "cpp",
         "xlocale": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "xiosbase": "cpp"
     }
 }

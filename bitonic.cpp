@@ -2,7 +2,6 @@
 // priority_queue in STL
 #define INF 200001
 #include <list>
-#include <utility>
 #include <queue>
 #include <iostream>
 
@@ -44,13 +43,13 @@ int shortestPath(int vtxNum) {
 					dist[dest].second.second = incr;
 					pq.push(make_pair(dist[dest].first, dest));
 				}
-				else if (incr && lastPath >= weight) {
+				else if (incr && lastPath > weight) {
 					dist[dest].first = newval;
 					dist[dest].second.first = weight;
 					dist[dest].second.second = false;
 					pq.push(make_pair(dist[dest].first, dest));
 				}
-				else if(monoIncDist[midpoint].first < INF){
+				else if(monoIncDist[midpoint].first < INF &&(dist[dest].first > monoIncDist[midpoint].first + weight)){
 					bool isitIncr = monoIncDist[midpoint].second <= weight;
 					dist[dest].first = monoIncDist[midpoint].first + weight;
 					dist[dest].second.first = weight;
