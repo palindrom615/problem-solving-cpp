@@ -1,8 +1,6 @@
 #include <iostream>
-#include <vector>
 
 using namespace std;
-vector<string> Answer;
 
 int main() {
   int T;
