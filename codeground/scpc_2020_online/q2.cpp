@@ -34,12 +34,12 @@ typedef vector<int> Deck;
 
 int Answer;
 
-int sum_of_draw(vector<int> x_acc, vector<int> y_acc, int i, int j, Draw draw) {
+int sum_of_draw(vector<int> &x_acc, vector<int> &y_acc, int i, int j, Draw draw) {
 	return x_acc[i + draw.first - 1] - x_acc[i - 1] + y_acc[j + draw.second - 1] - y_acc[j - 1];
 }
 
-int
-reverse_draw_from_case_2(int i, int j, vector<vector<int>> *memo, vector<int> x_acc, vector<int> y_acc, int k, int n) {
+void
+reverse_draw_from_case_2(int i, int j, vector<vector<int>> &memo, vector<int> &x_acc, vector<int> &y_acc, int k, int n) {
 	queue<Draw> q;
 	q.push(Draw(1, 0));
 	q.push(Draw(0, 1));
@@ -49,14 +49,16 @@ reverse_draw_from_case_2(int i, int j, vector<vector<int>> *memo, vector<int> x_
 		if (i + draw.first > n || j + draw.second > n) {
 			continue;
 		}
+		if (memo[i + draw.first][j + draw.second] == 1) {
+			continue;
+		}
 		if (sum_of_draw(x_acc, y_acc, i, j, draw) > k) {
 			continue;
 		}
-		(*memo)[i + draw.first][j + draw.second] = 1;
+		memo[i + draw.first][j + draw.second] = 1;
 		q.push(Draw(draw.first + 1, draw.second));
 		q.push(Draw(draw.first, draw.second + 1));
 	}
-	return 2;
 }
 
 int main(int argc, char **argv) {
@@ -74,9 +76,9 @@ int main(int argc, char **argv) {
 	// freopen("input.txt", "r", stdin);
 
 	cin >> T;
-	Deck x(3000);
+//	Deck x(3000);
 	vector<int> x_accumulated(3000);
-	Deck y(3000);
+//	Deck y(3000);
 	vector<int> y_accumulated(3000);
 
 	vector<vector<int>> memo(3001, vector<int>(3001));
@@ -91,31 +93,30 @@ int main(int argc, char **argv) {
 
 		int n, k;
 		cin >> n >> k;
-		for (int i = 0; i < n; i++) {
-			cin >> x[i];
-			x_accumulated[i] = x_accumulated[i - 1] + x[i];
+		int tmp;
+		cin >> x_accumulated[0];
+		for (int i = 1; i < n; i++) {
+			cin >> tmp;
+			x_accumulated[i] = x_accumulated[i - 1] + tmp;
 		}
-		for (int i = 0; i < n; i++) {
-			cin >> y[i];
-			y_accumulated[i] = y_accumulated[i - 1] + x[i];
+		cin >> y_accumulated[0];
+		for (int i = 1; i < n; i++) {
+			cin >> tmp;
+			y_accumulated[i] = y_accumulated[i - 1] + tmp;
 		}
-
 
 		memo[0][0] = 1;
-		int case1 = 1, case2 = 0;
+		int case1 = 0, case2 = 0;
 
 		for (int i = 0; i < n + 1; i++) {
 			for (int j = 0; j < n + 1; j++) {
-				if (i == 0 && j == 0) {
-					continue;
-				}
-				if (memo[i][j] == 0) {
-					memo[i][j] = 2;
-					reverse_draw_from_case_2(i, j, &memo, x_accumulated, y_accumulated, k, n);
-					case2 += 1;
-					continue;
-				} else if (memo[i][j] == 1) {
+				if (memo[i][j] == 1) {
 					case1 += 1;
+					continue;
+				} else if (memo[i][j] == 0) {
+					memo[i][j] = 2;
+					reverse_draw_from_case_2(i, j, memo, x_accumulated, y_accumulated, k, n);
+					case2 += 1;
 					continue;
 				}
 			}
