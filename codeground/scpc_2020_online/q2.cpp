@@ -19,18 +19,11 @@ typedef vector<int> Deck;
 
 int Answer;
 
-int sum_of_draw(Deck deckX, Deck deckY, int i, int j, Draw draw) {
-	int sum = 0;
-	for (int n = i - 1; n >= i - draw.first; n--) {
-		sum += deckX[n];
-	}
-	for (int n = j - 1; n >= j - draw.second; n--) {
-		sum += deckY[n];
-	}
-	return sum;
+int sum_of_draw(vector<int> x_acc, vector<int> y_acc, int i, int j, Draw draw) {
+	return x_acc[i - 1] - x_acc[i - draw.first - 1] + y_acc[j - 1] - y_acc[j - draw.second - 1];
 }
 
-int walk_draw(int i, int j, vector<vector<int>>memo, Deck x, Deck y, int k) {
+int walk_draw(int i, int j, vector<vector<int>>memo, vector<int> x_acc, vector<int> y_acc, int k) {
 	queue<Draw> q;
 	q.push(Draw(1, 0));
 	q.push(Draw(0, 1));
@@ -40,7 +33,7 @@ int walk_draw(int i, int j, vector<vector<int>>memo, Deck x, Deck y, int k) {
 		if (i - draw.first < 0 || j - draw.second < 0) {
 			continue;
 		}
-		if (sum_of_draw(x, y, i, j, draw) > k) {
+		if (sum_of_draw(x_acc, y_acc, i, j, draw) > k) {
 			continue;
 		}
 		if (memo[i - draw.first][j - draw.second] == 2) {
@@ -69,7 +62,10 @@ int main(int argc, char **argv) {
 
 	cin >> T;
 	Deck x(3000);
+	vector<int> x_accumulated(3000);
 	Deck y(3000);
+	vector<int> y_accumulated(3000);
+
 	vector<vector<int>> memo(3001, vector<int>(3001));
 	for (test_case = 0; test_case < T; test_case++) {
 
@@ -84,9 +80,11 @@ int main(int argc, char **argv) {
 		cin >> n >> k;
 		for (int i = 0; i < n; i++) {
 			cin >> x[i];
+			x_accumulated[i] = x_accumulated[i - 1] + x[i];
 		}
 		for (int i = 0; i < n; i++) {
 			cin >> y[i];
+			y_accumulated[i] = y_accumulated[i - 1] + x[i];
 		}
 
 		/**
@@ -106,7 +104,7 @@ int main(int argc, char **argv) {
 				if (i == 0 && j == 0 ) {
 					continue;
 				}
-				if ( 2 == (memo[i][j] = walk_draw(i, j, memo, x, y, k))) {
+				if ( 2 == (memo[i][j] = walk_draw(i, j, memo, x_accumulated, y_accumulated, k))) {
 					case2 += 1;
 				} else {
 					case1 +=1;
