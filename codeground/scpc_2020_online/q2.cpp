@@ -8,6 +8,21 @@ Do not use file input and output
 Please be very careful.
 */
 
+/**
+ * {(), ()}의 경우 case 1.
+ * 내 차례에서 카드를 뽑아서 case 2의 상태로 만들 수 있다면 나의 승리(case 1)
+ * => 카드의 합이 k 이하가 되도록 뽑는 경우의 수 중 case 2가 단 하나라도 있다면 case 1.
+ * 어떻게 뽑아도 case 1밖에 안나온다면 나의 패배(case 2)
+ *
+ * {(), ()}부터 시작해서 dynamic programming으로 풀기.
+ * 임의의 {i,j} 는 case 1, case 2 이렇게 두 종류의 상태 중 하나를 갖는다.
+ * 한 번의 draw로 case 2로 만들 수 있다면 반드시 case 1. (converse is not always true)
+ * 어떤 {n,m}에서 w.r.t every i < n, j < m인 {i, j}를 {n, m}의 이전 상태라고 하자.
+ *
+ * {n, m}의 이전 상태 중 case2에 해당하는 모든 경우까지 한 번에 도달할 수 없다고 하자.
+ * => 그러면 {n, m}은 case 2인 것이 자명하다. ({n, m}에서 한 번 draw하면 반드시 case 1 상태에 도달하게 되므로)
+ */
+
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -20,28 +35,26 @@ typedef vector<int> Deck;
 int Answer;
 
 int sum_of_draw(vector<int> x_acc, vector<int> y_acc, int i, int j, Draw draw) {
-	return x_acc[i - 1] - x_acc[i - draw.first - 1] + y_acc[j - 1] - y_acc[j - draw.second - 1];
+	return x_acc[i + draw.first - 1] - x_acc[i - 1] + y_acc[j + draw.second - 1] - y_acc[j - 1];
 }
 
-int walk_draw(int i, int j, vector<vector<int>>memo, vector<int> x_acc, vector<int> y_acc, int k) {
+int
+reverse_draw_from_case_2(int i, int j, vector<vector<int>> *memo, vector<int> x_acc, vector<int> y_acc, int k, int n) {
 	queue<Draw> q;
 	q.push(Draw(1, 0));
 	q.push(Draw(0, 1));
 	while (!q.empty()) {
 		Draw draw = q.front();
 		q.pop();
-		if (i - draw.first < 0 || j - draw.second < 0) {
+		if (i + draw.first > n || j + draw.second > n) {
 			continue;
 		}
 		if (sum_of_draw(x_acc, y_acc, i, j, draw) > k) {
 			continue;
 		}
-		if (memo[i - draw.first][j - draw.second] == 2) {
-			return 1;
-		} else {
-			q.push(pair<int, int>(draw.first + 1, draw.second));
-			q.push(pair<int, int>(draw.first, draw.second + 1));
-		}
+		(*memo)[i + draw.first][j + draw.second] = 1;
+		q.push(Draw(draw.first + 1, draw.second));
+		q.push(Draw(draw.first, draw.second + 1));
 	}
 	return 2;
 }
@@ -87,27 +100,23 @@ int main(int argc, char **argv) {
 			y_accumulated[i] = y_accumulated[i - 1] + x[i];
 		}
 
-		/**
-		 * {(), ()}의 경우 case 1.
-		 * 내 차례에서 카드를 뽑아서 case 2의 상태로 만들 수 있다면 나의 승리(case 1)
-		 * => 카드의 합이 k 이하가 되도록 뽑는 경우의 수 중 case 2가 단 하나라도 있다면 case 1.
-		 * 어떻게 뽑아도 case 1밖에 안나온다면 나의 패배(case 2)
-		 *
-		 * {(), ()}부터 시작해서 dynamic programming으로 풀기.
-		 */
+
 		memo[0][0] = 1;
-//		memo[1][0] = memo[0][1] = 2;
 		int case1 = 1, case2 = 0;
 
 		for (int i = 0; i < n + 1; i++) {
 			for (int j = 0; j < n + 1; j++) {
-				if (i == 0 && j == 0 ) {
+				if (i == 0 && j == 0) {
 					continue;
 				}
-				if ( 2 == (memo[i][j] = walk_draw(i, j, memo, x_accumulated, y_accumulated, k))) {
+				if (memo[i][j] == 0) {
+					memo[i][j] = 2;
+					reverse_draw_from_case_2(i, j, &memo, x_accumulated, y_accumulated, k, n);
 					case2 += 1;
-				} else {
-					case1 +=1;
+					continue;
+				} else if (memo[i][j] == 1) {
+					case1 += 1;
+					continue;
 				}
 			}
 		}
@@ -117,6 +126,10 @@ int main(int argc, char **argv) {
 		// Print the answer to standard output(screen).
 		cout << "Case #" << test_case + 1 << endl;
 		cout << case1 << " " << case2 << endl;
+
+		for (int i = 0; i < n + 1; i++) {
+			fill(memo[i].begin(), memo[i].begin() + n + 1, 0);
+		}
 	}
 
 	return 0;//Your program should return 0 on normal termination.
