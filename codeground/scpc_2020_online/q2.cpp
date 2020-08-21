@@ -10,22 +10,39 @@ Please be very careful.
 
 /**
  * {(), ()}의 경우 case 1.
+ * 나는 최선을 다하기 때문에 상대를 case 2로 만들기 위해 노력한다. 상대도 마찬가지.
  * 내 차례에서 카드를 뽑아서 case 2의 상태로 만들 수 있다면 나의 승리(case 1)
  * => 카드의 합이 k 이하가 되도록 뽑는 경우의 수 중 case 2가 단 하나라도 있다면 case 1.
  * 어떻게 뽑아도 case 1밖에 안나온다면 나의 패배(case 2)
  *
  * {(), ()}부터 시작해서 dynamic programming으로 풀기.
  * 임의의 {i,j} 는 case 1, case 2 이렇게 두 종류의 상태 중 하나를 갖는다.
- * 한 번의 draw로 case 2로 만들 수 있다면 반드시 case 1. (converse is not always true)
- * 어떤 {n,m}에서 w.r.t every i < n, j < m인 {i, j}를 {n, m}의 이전 상태라고 하자.
  *
- * {n, m}의 이전 상태 중 case2에 해당하는 모든 경우까지 한 번에 도달할 수 없다고 하자.
+ * 한 번의 draw로 case 2로 만들 수 있다면 반드시 case 1. (converse is not always true)
+ *
+ * 어떤 {n,m}에서 w.r.t every i <= n, j <= m (단, i, j = n, m은 제외){i, j}를 {n, m}의 이후 상태라고 하자.
+ * {n, m}에서 어떤 경우에도 draw 한 번으로 case 2인 이후 상태에 도달할 수 없다고 하자. := case 2 에서 역 드로우로 도달할 수 없다.
  * => 그러면 {n, m}은 case 2인 것이 자명하다. ({n, m}에서 한 번 draw하면 반드시 case 1 상태에 도달하게 되므로)
+ *
+ * 따라서 한 번 드로우로 case2인 상태에 도달할 수 있는 모든 이전 상태는 case 1.
+ * 역으로 case 2인 그 어떤 이후 상태로도 도달할 수 없는 이전 상태는 case 1.
+ *
+ * pseudo code
+ *
+ * case(0, 0) = 1
+ * for every case(i, j)
+ * 		if case(i, j) = 0 // case 2인 이후 상태에서 한 번의 역 드로우로 도달 못한 케이스
+ * 			case(i, j) = 2
+ * 			for every case((i, j) + draw) that draw < k
+ * 				case((i,j) + draw) = 1
+ * 		if case(i, j) = 1
+ * 			continue
  */
 
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <set>
 
 using namespace std;
 
@@ -34,30 +51,21 @@ typedef vector<int> Deck;
 
 int Answer;
 
-int sum_of_draw(vector<int> &x_acc, vector<int> &y_acc, int i, int j, Draw draw) {
-	return x_acc[i + draw.first - 1] - x_acc[i - 1] + y_acc[j + draw.second - 1] - y_acc[j - 1];
+int sum_of_reverse_draw(vector<int> &acc, int i, int draw) {
+	return acc[i + draw - 1] - acc[i - 1];
 }
 
 void
 reverse_draw_from_case_2(int i, int j, vector<vector<int>> &memo, vector<int> &x_acc, vector<int> &y_acc, int k, int n) {
-	queue<Draw> q;
-	q.push(Draw(1, 0));
-	q.push(Draw(0, 1));
-	while (!q.empty()) {
-		Draw draw = q.front();
-		q.pop();
-		if (i + draw.first > n || j + draw.second > n) {
-			continue;
-		}
-		if (memo[i + draw.first][j + draw.second] == 1) {
-			continue;
-		}
-		if (sum_of_draw(x_acc, y_acc, i, j, draw) > k) {
-			continue;
-		}
-		memo[i + draw.first][j + draw.second] = 1;
-		q.push(Draw(draw.first + 1, draw.second));
-		q.push(Draw(draw.first, draw.second + 1));
+	for (int draw_x = 1; sum_of_reverse_draw(x_acc, i, draw_x) <= k; draw_x += 1) {
+		if (i + draw_x > n)
+			break;
+		memo[i + draw_x][j] = 1;
+	}
+	for (int draw_y = 1; sum_of_reverse_draw(y_acc, j, draw_y) <= k; draw_y += 1) {
+		if (j + draw_y > n)
+			break;
+		memo[i][j + draw_y] = 1;
 	}
 }
 
