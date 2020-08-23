@@ -1,11 +1,3 @@
-//
-// Created by jwm on 8/23/20.
-//
-
-/**
- *
- */
-
 #include "test.h"
 #include <iostream>
 #include <sstream>
@@ -15,9 +7,9 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-	streambuf *coutbuf_ = std::cout.rdbuf();
+	ios_base::sync_with_stdio(false);
+	streambuf *stdout_buf = std::cout.rdbuf();
 
-	cout << TEST_INPUT << TEST_OUTPUT << endl;
 	stringstream submit_output;
 	ifstream correct_output;
 	correct_output.open(TEST_OUTPUT);
@@ -28,22 +20,29 @@ int main(int argc, char **argv) {
 
 	string correct_line;
 	string submit_line;
+	bool is_correct = true;
 	int line_num = 0;
 	while (getline(correct_output, correct_line)) {
-		getline(submit_output, submit_line);
+		if (!getline(submit_output, submit_line)) {
+			is_correct = false;
+			cerr << "submitted output ended too soon!" << endl;
+			cerr << line_num << ": " << correct_line << endl;
+			break;
+		}
 		boost::algorithm::trim(submit_line);
 		boost::algorithm::trim(correct_line);
 		line_num += 1;
 		if (correct_line != submit_line) {
-			cout.rdbuf(coutbuf_);
-			cout << "output line " << line_num << " was wrong"<<endl;
-			cout << "\tguess: \n\t" << submit_line << endl;
-			cout << "\tcorrect: \n\t" << correct_line << endl;
-
-			cout.rdbuf(submit_output.rdbuf());
+			is_correct = false;
+			cerr << "output line " << line_num << " was wrong" << endl;
+			cerr << "\tguess\n\t" << line_num << ": " << submit_line << endl;
+			cerr << "\tcorrect\n\t" << line_num << ": " << correct_line << endl;
 		}
 	}
-
-	cout.rdbuf(coutbuf_);
-	return 0;
+	if (getline(submit_output, submit_line)) {
+		is_correct = false;
+		cerr << "submitted is keep chattering after passing every cases!" << endl;
+		cerr << line_num << ": " << submit_line << endl;
+	}
+	return is_correct ? 0 : 1;
 }
