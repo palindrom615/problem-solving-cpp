@@ -1,7 +1,3 @@
-#ifdef TEST
-#define main executable_main
-#endif
-
 #include <iostream>
 using namespace std;
 
