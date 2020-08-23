@@ -10,6 +10,11 @@ Please be very careful.
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
+
+#ifdef TEST
+#define main executable_main
+#endif
 
 using namespace std;
 
