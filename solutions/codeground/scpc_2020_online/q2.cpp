@@ -44,10 +44,6 @@ Please be very careful.
 #include <queue>
 #include <set>
 
-#ifdef test
-#define main executable_main
-#endif
-
 using namespace std;
 
 typedef pair<int, int> Draw;

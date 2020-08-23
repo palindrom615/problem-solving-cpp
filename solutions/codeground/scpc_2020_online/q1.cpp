@@ -12,10 +12,6 @@ Please be very careful.
 #include <vector>
 #include <algorithm>
 
-#ifdef TEST
-#define main executable_main
-#endif
-
 using namespace std;
 
 int Answer;
