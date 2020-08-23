@@ -1,20 +1,18 @@
 #ifdef TEST
 #define main executable_main
 #endif
-#include <iostream>
 
+#include <iostream>
 using namespace std;
 
 int Answer;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
 	ios_base::sync_with_stdio(false);
 	int T, test_case;
 
 	cin >> T;
-	for(test_case = 0; test_case  < T; test_case++)
-	{
+	for (test_case = 0; test_case < T; test_case++) {
 
 		Answer = 0;
 		/////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +23,7 @@ int main(int argc, char** argv)
 		/////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Print the answer to standard output(screen).
-		cout << "Case #" << test_case+1 << endl;
+		cout << "Case #" << test_case + 1 << endl;
 		cout << Answer << endl;
 	}
 
