@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 	while (getline(correct_output, correct_line)) {
 		if (!getline(submit_output, submit_line)) {
 			is_correct = false;
-			cerr << "submitted output ended too soon!" << endl;
+			cerr << "output is too short!" << endl << endl;
 			cerr << line_num << ": " << correct_line << endl;
 			break;
 		}
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 	}
 	if (getline(submit_output, submit_line)) {
 		is_correct = false;
-		cerr << "submitted is keep chattering after passing every cases!" << endl;
+		cerr << "output is too long!" << endl << endl;
 		cerr << line_num << ": " << submit_line << endl;
 	}
 	return is_correct ? 0 : 1;

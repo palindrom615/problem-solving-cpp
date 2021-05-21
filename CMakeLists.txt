@@ -1,14 +1,19 @@
 project(problem_solving_cpp CXX)
-
 cmake_minimum_required(VERSION 3.17)
 
+set(ENV{VCPKG_OVERLAY_PORTS} ${CMAKE_CURRENT_SOURCE_DIR}/ports)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
         CACHE STRING "Vcpkg toolchain file")
+include(${CMAKE_TOOLCHAIN_FILE})
+
+find_path(VCPKG_INCLUDE_DIR atcoder)
+include_directories(${VCPKG_INCLUDE_DIR})
+
 set(EXECUTABLE_OUTPUT_PATH "build")
 set(LIBRARY_OUTPUT_PATH "build")
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(includes)
+include_directories(include)
 
 file(GLOB_RECURSE SOURCES solutions/*.cpp)
 foreach (SRC ${SOURCES})
