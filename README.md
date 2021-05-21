@@ -2,55 +2,86 @@
 
 ## Prerequisites
 
-* c++ >= 17
-* cmake >= 3.17
-* boost-algorithm >= 1.60
+- c++ >= 17
+- cmake >= 3.17
+- git
 
 ## How to
 
-### Start coding
+### Prepare prequisites
 
-To add solution for `cf553`,
- 
-```bash
-cp solutions/{example.cpp,cf553.cpp}
-```
+1. Download [vcpkg](https://vcpkg.io/en/index.html) with git submodule.
+   ```sh
+   git submodule init
+   git submodule update
+   ```
+1. Bootstrap vcpkg.
 
-and it's ready to start solving problem with `cf553.cpp` file.
+   ```sh
+   # for macOS & linux
+   ./vcpkg/bootstrap-vcpkg.sh --disable-metrics
 
-Adding directories inside `solutions` (e.g. `solutions/codeforce/cf553.cpp`) is 
-also good, except target name(i.e. c++ file name) must be unique.
+   # for windows
+   ./vcpkg/bootstrap-vcpkg.bat --disable-metrics
+   ```
 
-### Run source code
+1. (optional) Install `boost-algorithm` library:
+   This is needed to run [test](#run-test-case)!
+   ```sh
+   ./vcpkg/vcpkg install boost-algorithm
+   ```
+1. Generate cmake build system.
+   ```sh
+   cmake .
+   ```
 
-```bash
-cmake .
-cmake --build . --target cf553
-./build/cf553
-```
+### Start solving problems
 
-Beloved IDEs that supports CMake integration might also work.
+1. Create cpp file in `solutions` directory.
+
+   ```sh
+   # You can start with `solution/example.cpp`.
+   cp solutions/example.cpp solutions/cf553.cpp
+
+   # keeping file inside nested directory is also ok EXCEPT that, file name must be unique.
+   mkdir -p solutions/codeforce
+   cp solutions/example.cpp solutions/codeforce/cf553.cpp
+   ```
+
+1. Solve the problem!
+
+1. Compile your code with [cmake](https://cmake.org/) and run.
+
+   ```sh
+   cmake --build . --target cf553
+   ./build/cf553
+   ```
+
+   Beloved IDEs that supports CMake integration might also work.
 
 ### Run test case
 
-1. Add test input and expected output respectively as `cf553.in` `cf553.out` 
-beside `cf553.cpp`
-    ```bash
-    cat << EOF > solutions/cf553.in
+1.  Add test input and expected output respectively as `cf553.in` `cf553.out` besides `cf553.cpp`.
+
+    `cf553.in`
+
+    ```sh
     5 2 1
     5 3
     4 2
     6 4
     3 2
     2 2
-    EOF
-    
-    cat << EOF > solutions/cf553.out
+    ```
+
+    `cf553.out`
+
+    ```
     2 5
     TT
-    EOF
     ```
-1. Run test
+
+1.  Run test
     ```
     cmake --build . --target cf553_test
     ./build/cf553_test
@@ -58,10 +89,10 @@ beside `cf553.cpp`
 
 ### Add common utils
 
-Header-only might be enough now; Add utils inside `includes` directory. Assume
-that `includes/dijkstra.hpp` is implemented. Now the header file can be
+Header-only library inside `includes` directory is automatically linked.
+Suppose that `includes/dijkstra.hpp` is implemented. The header file can be
 used inside solution like:
-   
+
 ```c++
 ...
 #include <dijkstra.hpp>
