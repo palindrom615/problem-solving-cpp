@@ -81,7 +81,8 @@
     TT
     ```
 
-1.  Run test
+1.  Build and run test.
+    The test is defined as `{solution_filename}_test` by cmake.
     ```
     cmake --build . --target cf553_test
     ./build/cf553_test
