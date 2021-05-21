@@ -90,8 +90,8 @@
 
 ### Add common utils
 
-Header-only library inside `includes` directory is automatically linked.
-Suppose that `includes/dijkstra.hpp` is implemented. The header file can be
+Header-only library inside `include` directory is automatically linked.
+Suppose that `include/dijkstra.hpp` is implemented. The header file can be
 used inside solution like:
 
 ```c++

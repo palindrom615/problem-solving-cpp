@@ -10,7 +10,7 @@ set(EXECUTABLE_OUTPUT_PATH "build")
 set(LIBRARY_OUTPUT_PATH "build")
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(includes)
+include_directories(include)
 
 file(GLOB_RECURSE SOURCES solutions/*.cpp)
 foreach (SRC ${SOURCES})
