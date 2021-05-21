@@ -3,7 +3,8 @@
     "name": "problem-solving-cpp",
     "version-string": "0.1.0",
     "dependencies": [
-      "boost-algorithm"
+      "boost-algorithm",
+      "atcoder-library"
     ]
   }
   

@@ -1,10 +1,13 @@
 project(problem_solving_cpp CXX)
-
 cmake_minimum_required(VERSION 3.17)
 
+set(ENV{VCPKG_OVERLAY_PORTS} ${CMAKE_CURRENT_SOURCE_DIR}/ports)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
         CACHE STRING "Vcpkg toolchain file")
 include(${CMAKE_TOOLCHAIN_FILE})
+
+find_path(VCPKG_INCLUDE_DIR atcoder)
+include_directories(${VCPKG_INCLUDE_DIR})
 
 set(EXECUTABLE_OUTPUT_PATH "build")
 set(LIBRARY_OUTPUT_PATH "build")
@@ -24,8 +27,5 @@ foreach (SRC ${SOURCES})
         target_compile_definitions(${BIN}_lib PRIVATE main=executable_main)
         add_executable(${BIN}_test $<TARGET_OBJECTS:${BIN}_lib> test/test.cpp)
         target_compile_definitions(${BIN}_test PUBLIC TEST TEST_INPUT="${TEST_INPUT}" TEST_OUTPUT="${TEST_OUTPUT}")
-
-        find_path(BOOST_ALGORITHM_INCLUDE_DIRS "boost/algorithm/algorithm.hpp")
-        target_include_directories(${BIN}_test PRIVATE ${BOOST_ALGORITHM_INCLUDE_DIRS})
     endif ()
 endforeach ()
