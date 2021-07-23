@@ -1,12 +1,12 @@
 # Problem Solving Template for C++
 
-This template provides several built-in useful features for problem solving with c++. Such as
+This template provides several built-in useful features for problem solving with c++, such as
 
-- room for your own libraries
+- auto include your own libraries
 - [AtCoder library](https://github.com/atcoder/ac-library) included by default
 - flexible and IDE-friendly compilation upon [cmake](https://cmake.org/)
 - library management powered by [vcpkg](https://github.com/microsoft/vcpkg)
-- basic standard input/output automated testing
+- basic stdin/out automated testing
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ This template provides several built-in useful features for problem solving with
 
 ## Preparation
 
-1. Download vcpkg by git submodule.
+1. Download vcpkg with git submodule.
    ```sh
    git submodule init
    git submodule update
