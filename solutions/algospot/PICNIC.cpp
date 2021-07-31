@@ -11,19 +11,18 @@ bool inline contains(set<T> set, T elem) {
   return set.find(elem) != set.end();
 }
 
-int num_of_cases(int n, set<int> selected_students, vector<pair<int, int>> left_friends ) {
+int num_of_cases(int n, set<int> &selected_students, vector<pair<int, int>>::iterator left_friends,  vector<pair<int, int>>::iterator left_friends_end ) {
   int ans = 0;
   if (selected_students.size() == n) {
     return 1;
   }
-  for (auto friends = left_friends.begin(); friends != left_friends.end(); ++friends) {
+  for (auto friends = left_friends; friends != left_friends_end; ++friends) {
     if(contains(selected_students, friends->first) || contains(selected_students, friends->second)) {
       continue;
     }
     selected_students.insert(friends->first);
     selected_students.insert(friends->second);
-    vector<pair<int, int>> newvec(friends, left_friends.end());
-    ans += num_of_cases(n, selected_students, newvec);
+    ans += num_of_cases(n, selected_students, friends, left_friends_end);
     selected_students.erase(friends->first);
     selected_students.erase(friends->second);
   }
@@ -44,7 +43,8 @@ int main(int argc, char **argv) {
       cin >> f1 >> f2;
       friends[i] = pair<int, int>(f1, f2);
     }
-    Answer = num_of_cases(n, set<int>{}, friends);
+    set<int> selected_students{};
+    Answer = num_of_cases(n, selected_students, friends.begin(), friends.end());
     /////////////////////////////////////////////////////////////////////////////////////////////
     /*
        Implement your algorithm here.
